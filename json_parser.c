@@ -44,6 +44,10 @@ struct json_object *get_json_object_from_str(char *str, int total)
         {
           nptr = str + idx;
           e = make_kval_element(cptr, nptr - cptr);
+
+          memset(buf, 0x0, 1024);
+          memcpy(buf, cptr, nptr - cptr);
+          assert(e != NULL);
           cptr = nptr + 1;
           add_kval_element_to_json_object(jobj, e);
         }
@@ -160,6 +164,7 @@ struct json_list *get_json_list_by_key(struct json_object *jobj, char *key)
 #endif /* DEBUG */
   e = get_kval_element_from_json_object(jobj, key, strlen(key));
 #ifdef DEBUG
+  printf("[test] key: %s\n", key);
   assert(e != NULL);
   assert(e->type == JSON_TYPE_JSON_LIST);
   print_kval_element(e);

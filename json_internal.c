@@ -128,10 +128,10 @@ struct kval *make_kval_element(char *ptr, int len)
   assert(c > 0);
 #endif /* DEBUG */
 
-  while (*p == ' ' || *p == '\"')
+  while (*p == ' ' || *p == '\"' || *p == '\r' || *p == '\n')
     p++;
 
-  while (*q == ' ' || *q == '\"')
+  while (*q == ' ' || *q == '\"' || *q == '\r' || *q == '\n')
     q--;
 
   q += 1;
@@ -148,10 +148,10 @@ struct kval *make_kval_element(char *ptr, int len)
   q = ptr + len - 1;
   
 
-  while (*p == ' ')
+  while (*p == ' ' || *p == '\r' || *p == '\n')
     p++;
 
-  while (*q == ' ')
+  while (*q == ' ' || *q == '\r' || *q == '\n')
     q--;
 
   switch (*p)
