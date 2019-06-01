@@ -8,7 +8,7 @@ int main()
 {
   struct json_object *jobj, *tmp, *ttmp, *ntmp, *itmp;
   struct json_list *question, *answer;
-  int i, len, type, nlen, ilen;
+  int i, len, type, nlen, ilen, err;
   char *ip, *name;
   char nbuf[1024], ibuf[1024];
   char *str = "{\"Status\": 0,\"TC\": false,\"RD\": true, \"RA\": true, \"AD\": false,\"CD\": false,\"Question\":[{\"name\": \"my.snu.ac.kr.\", \"type\": 1}],\"Answer\":[{\"name\": \"my.snu.ac.kr.\", \"type\": 5, \"TTL\": 3303, \"data\": \"portal.snu.ac.kr.\"},{\"name\": \"portal.snu.ac.kr.\", \"type\": 1, \"TTL\": 3303, \"data\": \"147.46.10.20\"}]}";
@@ -51,7 +51,8 @@ int main()
     assert(tmp != NULL);
     print_json_object(tmp);
 
-    type = get_int_value_by_key(tmp, "type");
+    type = get_int_value_by_key(tmp, "type", &err);
+    assert(err != 1);
     if (type == 1)
     {
       ip = get_str_value_by_key(tmp, "data", &ilen);

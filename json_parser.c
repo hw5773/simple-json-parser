@@ -91,7 +91,7 @@ err:
   return NULL;
 }
 
-int get_int_value_by_key(struct json_object *jobj, char *key)
+int get_int_value_by_key(struct json_object *jobj, char *key, int *err)
 {
   struct kval *e;
 #ifdef DEBUG
@@ -104,8 +104,26 @@ int get_int_value_by_key(struct json_object *jobj, char *key)
   assert(e != NULL);
   assert(e->type == JSON_TYPE_INTEGER);
 #endif /* DEBUG */
+  
+  *err = 0;
+
+  // Not exist
+  if (!e)
+  {
+    *err = 1;
+    goto err;
+  }
+
+  // Type error
+  if (e->type != JSON_TYPE_INTEGER) 
+  {
+    *err = 2;
+    goto err;
+  }
 
   return char_to_int(e->value, e->value + e->vlen - 1);
+err:
+  return 0;
 }
 
 char *get_str_value_by_key(struct json_object *jobj, char *key, int *len)

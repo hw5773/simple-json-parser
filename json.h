@@ -36,9 +36,16 @@ struct json_list
 
 
 struct json_object *get_json_object_from_str(char *str, int total);
-
 struct json_object *get_json_object_by_key(struct json_object *jobj, char *key);
-int get_int_value_by_key(struct json_object *jobj, char *key);
+
+/**
+ * @brief Get the integer value by a key
+ * @param jobj JSON object to be retrieved
+ * @param key key for retrieval
+ * @param err error (0: no error, 1: not-exist, 2: type-error)
+ * @return the integer value
+ */
+int get_int_value_by_key(struct json_object *jobj, char *key, int *err);
 
 /**
  * @brief Get the string value by a key
