@@ -39,9 +39,8 @@ struct json_object *get_json_object_from_str(char *str, int total)
       case '}':
         level--;
         if (level < 0) goto err;
-        break;
       case ',':
-        if (level == 1 && lst == 0)
+        if (lst == 0 && (level == 0 || level == 1))
         {
           nptr = str + idx;
           e = make_kval_element(cptr, nptr - cptr);
@@ -58,10 +57,6 @@ struct json_object *get_json_object_from_str(char *str, int total)
     }
     idx++;
   }
-
-  nptr = str + idx - 1;
-  e = make_kval_element(cptr, nptr - cptr);
-  add_kval_element_to_json_object(jobj, e);
 
   return jobj;
 err:
@@ -142,8 +137,8 @@ char *get_str_value_by_key(struct json_object *jobj, char *key, int *len)
 
   if (!e) goto err;
   if (e->type != JSON_TYPE_STRING) goto err;
-  *len = e->vlen;
-  return e->value;
+  *len = e->vlen - 2;
+  return e->value + 1;
 err:
   return NULL;
 }
@@ -165,6 +160,7 @@ struct json_list *get_json_list_by_key(struct json_object *jobj, char *key)
 #endif /* DEBUG */
   e = get_kval_element_from_json_object(jobj, key, strlen(key));
 #ifdef DEBUG
+  assert(e != NULL);
   assert(e->type == JSON_TYPE_JSON_LIST);
   print_kval_element(e);
 #endif /* DEBUG */
@@ -185,9 +181,9 @@ struct json_list *get_json_list_by_key(struct json_object *jobj, char *key)
     switch(ch)
     {
       case '{':
-        level++;
-        if (level == 1)
+        if (level == 0)
           cptr = str + idx;
+        level++;
         break;
       case '}':
         level--;
