@@ -1,7 +1,39 @@
-all:
-	gcc -DDEBUG -c json_parser.c
-	gcc -DDEBUG -c json_internal.c
-	gcc -DDEBUG -c test_json.c
-	gcc -o test_json test_json.o json_parser.o json_internal.o
+CC=gcc
+AR=ar
+LD=ld
+RM=rm
+DEBUG ?= 0
+
+ROOT_DIRECTORY=$(HOME)/devel/rpi/edge-libevent
+BIN=test_json
+LIB=simple_json.a
+
+SRCS=json_internal.c json_parser.c
+OBJS=$(SRCS:.c=.o)
+TEST_SRC=test_json.c
+TEST_OBJ=test_json.o
+
+CFLAGS=-Wall -I. -I$(ROOT_DIRECTORY)/include
+ARFLAGS=rscv
+
+ifeq ($(DEBUG), 1)
+	CFLAGS += -DDEBUG
+endif
+
+LDFLAGS=-L$(ROOT_DIRECTORY)/lib -lssl -lcrypto
+
+all: test_json lib
+
+lib: $(OBJS)
+	$(AR) $(ARFLAGS) $(LIB) $(OBJS)
+
+test_json: $(TEST_OBJ) $(OBJS)
+	$(CC) -o $@ $(TEST_OBJ) $(OBJ) $(LDFLAGS)
+	@echo "LINK => $@"
+
+%.o: %.c
+	$(CC) -c $< $(CFLAGS)
+	@echo "CC <= $<"
+
 clean:
-	rm test_json *.o
+	$(RM) $(BIN) $(OBJS) $(TEST_OBJ) $(LIB)
